@@ -1,5 +1,3 @@
 # cocoins, for coin market
-
-# 2021.12.31 ~
-
-# React, TypeScript
+2021.12.31 ~
+React, TypeScript

@@ -1,6 +1,6 @@
 import React from 'react';
 import { useQuery } from 'react-query';
-import { Link } from 'react-router-dom';
+import { Link, Outlet } from 'react-router-dom';
 import styled from 'styled-components';
 import { fetchCoins } from '../api/api';
 
@@ -26,7 +26,12 @@ function Coins() {
           {data?.map((coin) => {
             return (
               <Coin key={coin.id}>
-                <Link to={{ pathname: `${coin.id}` }}>
+                <Link
+                  to={{
+                    pathname: `/coins/${coin.id}`,
+                  }}
+                  state={{ name: coin.name }}
+                >
                   <CoinImg src={`https://cryptoicon-api.vercel.app/api/icon/${coin.symbol.toLowerCase()}`} alt={coin.name} />
                   {coin.name}
                 </Link>

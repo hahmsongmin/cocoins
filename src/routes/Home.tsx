@@ -48,7 +48,7 @@ const EnterBtn = styled.button`
   border-radius: 15px;
   border: none;
   cursor: pointer;
-  background-color: #18dcff;
+  background-color: ${(props) => props.theme.bgColor};
   color: #fff;
   padding: 10px;
   transform: translateY(-70%);

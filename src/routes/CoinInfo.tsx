@@ -1,10 +1,11 @@
-import React from 'react';
 import { useQuery } from 'react-query';
-import { Link, Outlet, Route, Routes, useLocation, useMatch, useParams } from 'react-router-dom';
+import { Link, Outlet, useLocation, useMatch, useNavigate, useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import { fetchCoinInfo, fetchCoinTickers } from '../api/api';
-import Chart from './Chart';
-import Price from './Price';
+import { Helmet, HelmetProvider } from 'react-helmet-async';
+import FAIcon from '../FAIcon';
+import { faChevronCircleLeft } from '@fortawesome/free-solid-svg-icons';
+import { useModeChange } from '../stateManagement/contexts';
 
 type IState = {
   state: {
@@ -74,14 +75,26 @@ type CoinTickersData = {
 function CoinInfo() {
   const { state } = useLocation() as IState;
   const { coinId } = useParams<RouteParams>();
-  const temp = useMatch('/coins/:coinId/chart');
+  const navHistory = useNavigate();
+  const isClickChart = useMatch('/coins/:coinId/chart');
+  const isClickPrice = useMatch('/coins/:coinId/price');
   const { isLoading: infoLoading, data: infoData } = useQuery<CoinInfoData>(['info', coinId], () => fetchCoinInfo(coinId!));
   const { isLoading: tickersLoading, data: tickersData } = useQuery<CoinTickersData>(['price', coinId], () => fetchCoinTickers(coinId!));
 
   const loading = infoLoading || tickersLoading;
-  console.log(state);
+
+  const backBtnClick = () => {
+    navHistory('/coins');
+  };
+
   return (
     <Container>
+      <HelmetProvider>
+        <Helmet>
+          <title>{state?.name ? state.name : loading ? 'Loading...' : infoData?.name}</title>
+        </Helmet>
+      </HelmetProvider>
+      <BackBtn onClick={backBtnClick} icon={faChevronCircleLeft} size="3x" />
       <Header>{state?.name ? state.name : loading ? 'Loading...' : infoData?.name}</Header>
       {loading ? (
         'Loading....'
@@ -101,11 +114,22 @@ function CoinInfo() {
               <span>{`$${tickersData?.quotes.USD.price.toFixed(5)}`}</span>
             </OverviewItem>
           </Overview>
+          <Description>{infoData?.description}</Description>
+          <Overview>
+            <OverviewItem>
+              <span>Total Suply:</span>
+              <span>{tickersData?.total_supply}</span>
+            </OverviewItem>
+            <OverviewItem>
+              <span>Max Supply:</span>
+              <span>{tickersData?.max_supply}</span>
+            </OverviewItem>
+          </Overview>
           <Tabs>
-            <Tab>
+            <Tab isActive={isClickChart != null}>
               <Link to={`/coins/${coinId}/chart`}>Chart</Link>
             </Tab>
-            <Tab>
+            <Tab isActive={isClickPrice != null}>
               <Link to={`/coins/${coinId}/price`}>Price</Link>
             </Tab>
           </Tabs>
@@ -122,21 +146,39 @@ const Container = styled.div`
   padding: 0px 20px;
   max-width: 480px;
   margin: 10px auto;
+  border-radius: 15px;
+  background-color: ${(props) => props.theme.bgColor};
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 `;
 
 const Header = styled.header`
   height: 10vh;
   font-size: 50px;
-  color: #33d9b2;
+  color: ${(props) => props.theme.titleColor};
   display: flex;
   justify-content: center;
   align-items: center;
 `;
 
+const BackBtn = styled(FAIcon)`
+  background-color: ${(props) => props.theme.titleColor};
+  color: white;
+  border-radius: 50%;
+  margin-top: 10px;
+  cursor: pointer;
+  &:active {
+    box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.5);
+  }
+`;
+
 const Overview = styled.div`
   display: flex;
   justify-content: space-between;
-  background-color: rgba(0, 0, 0, 0.5);
+  color: ${(props) => props.theme.textColor};
+  background-color: rgba(248, 194, 145, 0.3);
   padding: 10px 20px;
   border-radius: 10px;
 `;
@@ -154,6 +196,10 @@ const OverviewItem = styled.div`
   }
 `;
 
+const Description = styled.p`
+  margin: 20px 0px;
+`;
+
 const Tabs = styled.div`
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -161,14 +207,15 @@ const Tabs = styled.div`
   gap: 10px;
 `;
 
-const Tab = styled.span`
+const Tab = styled.span<{ isActive: boolean }>`
   text-align: center;
   text-transform: uppercase;
-  font-size: 12px;
-  font-weight: 400;
-  background-color: rgba(0, 0, 0, 0.5);
-  padding: 7px 0px;
+  font-size: 20px;
+  font-weight: 700;
+  background-color: rgba(248, 194, 145, 0.3);
+  padding: 10px 0px;
   border-radius: 10px;
+  color: ${(props) => (props.isActive ? props.theme.titleColor : props.theme.textColor)};
   a {
     display: block;
   }

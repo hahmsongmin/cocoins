@@ -1,8 +1,11 @@
-import React from 'react';
 import { useQuery } from 'react-query';
-import { Link, Outlet } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import { fetchCoins } from '../api/api';
+import FAIcon from '../FAIcon';
+import { faToggleOff, faToggleOn } from '@fortawesome/free-solid-svg-icons';
+import { useState } from 'react';
+import { useModeChange } from '../stateManagement/contexts';
 
 interface Icoins {
   id: string;
@@ -16,9 +19,24 @@ interface Icoins {
 
 function Coins() {
   const { isLoading, data } = useQuery<Icoins[]>('coins', fetchCoins);
+  const [isToggleClick, setIsToggleColick] = useState(false);
+  const { modeChange, mode } = useModeChange();
+
+  const handleToggle = () => {
+    setIsToggleColick(!isToggleClick);
+    modeChange();
+  };
+
   return (
     <Container>
       <Header>Coins</Header>
+      <EmptyContainer>
+        <ModeContainer>
+          <p>Light</p>
+          <ToggleMode onClick={handleToggle} icon={mode ? faToggleOn : faToggleOff} size="3x" />
+          <p>Dark</p>
+        </ModeContainer>
+      </EmptyContainer>
       {isLoading ? (
         'Loading...'
       ) : (
@@ -51,26 +69,50 @@ const Container = styled.div`
   max-width: 480px;
   margin: 10px auto;
   border-radius: 15px;
-  background-color: #f1f2f6;
+  background-color: white;
   padding: 0px 20px;
   max-width: 480px;
   margin: 0 auto;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 `;
 
 const Header = styled.header`
   height: 10vh;
-  color: #33d9b2;
+  color: ${(props) => props.theme.titleColor};
   display: flex;
   font-size: 50px;
   justify-content: center;
   align-items: center;
 `;
+
+const EmptyContainer = styled.div`
+  display: flex;
+  justify-content: end;
+`;
+
+const ModeContainer = styled.div`
+  font-weight: bold;
+  width: 35%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+`;
+
+const ToggleMode = styled(FAIcon)`
+  color: ${(props) => props.theme.titleColor};
+  margin: 10px 0;
+  cursor: pointer;
+`;
+
 const CoinList = styled.ul``;
 
 const Coin = styled.li`
   font-size: 20px;
-  background-color: #33d9b2;
-  color: white;
+  background-color: ${(props) => props.theme.bgColor};
+  color: ${(props) => props.theme.textColor};
   padding: 20px;
   border-radius: 20px;
   margin-bottom: 10px;
@@ -83,7 +125,7 @@ const Coin = styled.li`
 
   &:hover {
     a {
-      color: tomato;
+      color: ${(props) => props.theme.titleColor};
     }
   }
 `;

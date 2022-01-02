@@ -2,6 +2,8 @@ import { useQuery } from 'react-query';
 import ApexChart from 'react-apexcharts';
 import { useParams } from 'react-router-dom';
 import { fetchCoinOhlcv } from '../api/api';
+import { useRecoilValue } from 'recoil';
+import { isDarkAtom } from '../stateManagement/atoms';
 
 type Ohlcv = {
   time_open: string;
@@ -15,9 +17,10 @@ type Ohlcv = {
 };
 
 function Chart() {
+  const isDark = useRecoilValue(isDarkAtom);
   const { coinId } = useParams<{ coinId: string }>();
   const { isLoading, data } = useQuery<Ohlcv[]>(['chart', coinId], () => fetchCoinOhlcv(coinId!));
-  console.log(data);
+
   return (
     <div>
       {isLoading ? (
@@ -47,7 +50,7 @@ function Chart() {
               background: 'transparent',
             },
             theme: {
-              mode: 'light',
+              mode: isDark ? 'dark' : 'light',
             },
             fill: {
               type: 'gradient',

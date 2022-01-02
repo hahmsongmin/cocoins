@@ -6,6 +6,8 @@ import FAIcon from '../FAIcon';
 import { faToggleOff, faToggleOn } from '@fortawesome/free-solid-svg-icons';
 import { useState } from 'react';
 import { useModeChange } from '../stateManagement/contexts';
+import { useSetRecoilState } from 'recoil';
+import { isDarkAtom } from '../stateManagement/atoms';
 
 interface Icoins {
   id: string;
@@ -21,9 +23,11 @@ function Coins() {
   const { isLoading, data } = useQuery<Icoins[]>('coins', fetchCoins);
   const [isToggleClick, setIsToggleColick] = useState(false);
   const { modeChange, mode } = useModeChange();
+  const setDarkAtom = useSetRecoilState(isDarkAtom); // function 을 가져옴, setState 와 같은 방식으로 작동
 
   const handleToggle = () => {
     setIsToggleColick(!isToggleClick);
+    setDarkAtom((current) => !current);
     modeChange();
   };
 

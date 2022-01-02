@@ -1,14 +1,12 @@
-import { DefaultTheme, LightMode, DarkMode } from 'styled-components';
+import { DefaultTheme } from 'styled-components';
 
-export const theme: DefaultTheme = {};
-
-export const lightMode: LightMode = {
+export const lightMode: DefaultTheme = {
   titleColor: '#ff4757',
   textColor: 'black',
   bgColor: '#f1f2f6',
 };
 
-export const darkMode: DarkMode = {
+export const darkMode: DefaultTheme = {
   titleColor: '#ff4757',
   textColor: 'white',
   bgColor: 'black',

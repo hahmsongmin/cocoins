@@ -8,9 +8,13 @@ import Home from './routes/Home';
 import Price from './routes/Price';
 import { useModeChange } from './stateManagement/contexts';
 
-function Routers() {
-  const { mode } = useModeChange();
+type RoutersProps = {
+  testFunction: () => void;
+};
 
+function Routers({ testFunction }: RoutersProps) {
+  const { mode } = useModeChange();
+  testFunction();
   return (
     <BrowserRouter>
       <ThemeProvider theme={mode === false ? lightMode : darkMode}>

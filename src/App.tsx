@@ -4,10 +4,15 @@ import { ReactQueryDevtools } from 'react-query/devtools';
 import UseContextProvider from './stateManagement/contexts';
 
 function App() {
+  // TypeScript Test,
+  const testFunction = () => {
+    console.log('Hello');
+  };
+
   return (
     <UseContextProvider>
       <GlobalStyle />
-      <Routers />
+      <Routers testFunction={testFunction} />
       <ReactQueryDevtools initialIsOpen={true} />
     </UseContextProvider>
   );
